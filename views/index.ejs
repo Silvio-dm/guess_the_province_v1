@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/styles/main.css">
+  <title>Where is it?</title>
+</head>
+
+<body>
+  
+  <div class="container">
+    <div class="benvenuto" style="display:flex; align-items: center">
+      <h1 >
+        <%= locals.benvenuto %>
+      </h1>
+    </div>
+    
+  
+    <form action="/login" id="form" class="form benvenuto" method="POST">
+      <select name="provinces" class="form-select">
+        <option value="">Choose the difficulty level:</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+      </select>
+
+      <div class="logged_player">
+        <label for="nickname"><h2>Nickname:</h2></label>
+        <input type="text" id="nickname" name="nickname" class="field" style="font-size: x-large;"><br><br>
+        <label for="password"><h2>Password:</h2></label>
+        <input type="text" id="password" name="password" class="field" style="font-size: x-large;"><br><br>
+        <input type="submit" value="Submit" class="province_button" name="logIn_button">
+      </div>
+
+      <div class="oppure">
+        <h3>Oppure -> </h3>
+      </div>
+      <div class="guest_player">
+        <label for="guestName"><h2>Play as a Guest:</h2></label>
+        <input type="text" id="guestName" name="guestName" placeholder="Your name" class="field" style="font-size: x-large;">
+        <input type="submit" value="Submit" class="province_button" name="guest_button">
+      </div>
+
+      <!--      <button type="submit" class="form-submit button-go">Go</button>   -->
+    </form>
+    <form action="/create_account" id="form" class="form benvenuto" method="POST">
+      <div class="create_account">
+        <h2>Non sei registrato?</h2>
+        <button type="submit" class="province_button" name="createAccount_button">Registrati!</button>  
+      </div>
+
+    </form>
+    
+    
+  </div>
+  
+  
+
+</body>
+
+</html>

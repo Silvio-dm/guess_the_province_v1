@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/styles/main.css">
+  <title>Where is it?</title>
+</head>
+
+<body>
+    <div class="container_game">
+    
+      <form action="/newgame" id="form" class="form_game" method="POST">
+        <select name="provinces" class="form-select-game">
+          <option value="">Choose the difficulty level:</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+        </select>
+        <button type="submit" class="form-submit button-go">Go</button>
+      </form>
+      <form action="/logout" method="POST" class="form_game">
+        <button  type="submit" class="form-submit button-go" style="max-width: 100px; max-height: 40px; vertical-align:middle;"><a href="/">Logout</a></button>
+      </form>
+
+      
+
+      
+    </div>
+    
+    <div class="center">
+      <h1 style="text-align: center;"><%= locals.message%>
+        </h1>
+  
+      <section id="cards" class="cards">
+        <%if (locals.town_to_guess) {%>
+          <article class="card-item">
+            <span>
+                <h2><%=town_to_guess%></h2>
+                <!--                <span class="card-number"></span>    -->  
+              </span>
+            </div>
+          </article>
+  
+          <%}%>
+            <%if (locals.error) {%>
+              <div id="tag-error" class="tag-error">
+                <%= error  %>
+              </div>
+            <%}%>
+      </section>
+    </div>
+  
+    <div class="container_buttons">
+      <form action="/submit" method="POST">
+        <%if (locals.provinces){%>
+          <% for (let i = 0; i<provinces.length; i++){%>
+            <button class="province_button" name="button" value=
+            "<%=provinces[i]%>"
+              ><h3>
+              <%=provinces[i]%>
+            </h3>
+            </button>
+        <%}}%>
+      </form>
+    </div>
+
+    <div style="margin-left: 20px;">
+      <h2><%=locals.guestName%></h2>
+      <h2> Score:<%=locals.score%></h2>
+      <h2>Record:<%=locals.record%></h2>
+    </div>
+  
+  </body>
+  
+  </html>

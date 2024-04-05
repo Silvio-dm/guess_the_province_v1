@@ -1,0 +1,292 @@
+/* ------------ */
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  
+}
+html {
+  height: 100%;
+}
+/* ------------ */
+body {
+  font-family: monospace;
+  height: 100%;
+  background-color: #31363F;
+  color: #EEEEEE;
+}
+
+a{
+  font-size: xx-large;
+  font-family: monospace;
+  height: 100%;
+  background-color: #31363F;
+  color: #EEEEEE;
+  align-items: baseline;
+
+}
+
+h1 {
+  width: 100%;
+  margin-top: 50px;
+  padding: auto;
+}
+/* ------------ */
+.container {
+  /*height: 200px;*/
+  /*width: 50%;*/
+  /*max-width: 570px;*/
+  margin: 0 auto;
+  padding: 60px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  
+}
+
+.container_game {
+  /*height: 200px;*/
+  /*width: 50%;*/
+  /*max-width: 570px;*/
+  margin: 0 auto;
+  padding: 60px;
+
+  display: grid;
+  gap: 50px;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.benvenuto{
+  grid-column-start: 1;
+  grid-column-end: 5;
+  
+}
+.container_buttons{
+  
+  margin: 0 auto;
+  padding: 60px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ------------ */
+.form {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
+  grid-column-gap: 30px;
+  grid-row-gap: 30px;
+}
+
+
+.form-select{
+  background-color: #31363F;
+  color: #EEEEEE;
+  grid-column-start: 1;
+  grid-column-end: 3;
+  font-size: xx-large;
+
+}
+
+.form-select-game{
+  background-color: #31363F;
+  color: #EEEEEE;
+  grid-column-start: 1;
+  grid-column-end: 3;
+  font-size: xx-large;
+}
+
+.form_game {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-column-gap: 30px;
+  grid-row-gap: 30px;
+  grid-column-start: 1;
+  grid-column-end: 4;
+}
+
+
+.field{
+  background-color: #31363F;
+  color: #EEEEEE;
+  border: 1px solid rgb(232, 232, 232);
+}
+
+
+.logged_player{
+  grid-row-start: 1;
+  grid-column-start: 3;
+  
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+
+
+.oppure{
+  grid-row-start: 1;
+  grid-column-start: 4;
+  margin-top: 80px;
+  text-align: center;
+}
+
+.guest_player{
+  grid-row-start: 1;
+  grid-column-start: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 60px;
+}
+
+.create_account{
+  grid-row-start: 2;
+  grid-column-start: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 60px;
+}
+
+
+
+.form-submit {
+  outline: none;
+  border: 1px solid rgb(232, 232, 232);
+  background-color: #31363F;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 36px;
+  
+}
+.form-submit:focus {
+  box-shadow: 0 0 0 0.5px rgb(153, 153, 153);
+}
+
+.button-go{
+  color: white;
+}
+
+.button-go:hover{
+  cursor: pointer;
+  color: #31363F;
+  background-color: #EEEEEE;
+}
+
+.button-go:active {
+  color: #29407c;
+  background-color:#31363F;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+.province_button{
+  min-width: 100px;
+  min-height: 50px;
+  color: aliceblue;
+  background-color: #31363F;
+  border-radius: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.province_button:hover{
+  cursor: pointer;
+  color: #31363F;
+  
+  border-color: white;
+  background-color:white;
+  
+}
+
+.province_button:active {
+  cursor: pointer;
+  color: aliceblue;
+  background-color: #31363F;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+.center{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+
+.cards {
+  display: flex;
+  margin: 20px 0;
+  width: 100%;
+  justify-content: center;
+}
+.card-item {
+  width: 50%;
+  padding: 20px;
+  border: 1px solid rgb(232, 232, 232);
+  border-radius: 5px;
+  background-color: #31363F;
+  color: #EEEEEE;
+  margin-top: 30px;
+  text-align: center;
+}
+.card-info {
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-between;
+}
+.card-activity {
+  line-height: 1.2;
+  margin-top: 10px;
+}
+.tag-error {
+  width: 100%;
+  text-align: center;
+}
+/* ------------ */
+.is-element-hidden {
+  display: none;
+}
+/* ------------ */
+@media (max-width: 620px) {
+  .container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 60px 20px;
+  }
+  .form {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
+  }
+}
+
+
+@media (min-width: 1px) and (max-width: 920px) {
+  .container{
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+}
