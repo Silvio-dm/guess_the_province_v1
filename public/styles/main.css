@@ -1,4 +1,4 @@
-/* ------------ */
+/* ------
 *,
 *::after,
 *::before {
@@ -10,7 +10,9 @@
 html {
   height: 100%;
 }
-/* ------------ */
+------ */
+
+
 body {
   font-family: monospace;
   height: 100%;
@@ -54,9 +56,19 @@ h1 {
   margin: 0 auto;
   padding: 60px;
 
-  display: grid;
+  display: flex;
   gap: 50px;
+  justify-content: space-around;
+  /*grid-template-columns: 1fr 1fr 1fr 1fr;*/
+}
+
+.play_again{
+  display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.play_again_button{
+  grid-column-start: 2;
 }
 
 .benvenuto{
@@ -106,6 +118,7 @@ h1 {
 
 .form_game {
   width: 100%;
+  
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr;
@@ -113,6 +126,7 @@ h1 {
   grid-row-gap: 30px;
   grid-column-start: 1;
   grid-column-end: 4;
+  
 }
 
 
@@ -175,6 +189,22 @@ h1 {
 .form-submit:focus {
   box-shadow: 0 0 0 0.5px rgb(153, 153, 153);
 }
+
+.submit-prov {
+  outline: none;
+  border: 1px solid rgb(232, 232, 232);
+  background-color: #31363F;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 0px;
+  
+}
+.submit-prov:focus {
+  box-shadow: 0 0 0 0.5px rgb(153, 153, 153);
+}
+
 
 .button-go{
   color: white;

@@ -3,10 +3,33 @@ import bodyParser from "body-parser";
 import axios from "axios";
 import fs from "fs";
 import session from 'express-session';
+import pg from "pg";
+
+
+/*
+const db = new pg.Client({
+  user: "postgres",
+  host: "localhost",
+  database: "guess_the_province",
+  password: "Domodossola81!",
+  port: 5432,
+});
+*/
+
+const pool = new pg.Pool({
+  user: "postgres",
+  host: "localhost",
+  database: "guess_the_province",
+  password: "Domodossola81!",
+  port: 5432,
+});
 
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+
+
 
 app.use(session({
   secret: 'your-secret-key', // Chiave segreta per firmare il cookie della sessione
@@ -59,7 +82,7 @@ function shuffleArray(array) {
   return array;
 }
 
-//build_provinces(provinces_basket);    
+
 
 async function buildProvinces(){
   
@@ -81,11 +104,11 @@ async function buildProvinces(){
     
     }
     console.log("Province to guess: "+random_province);
-    console.log("Province array: "+provinces);
+    //console.log("Province array: "+provinces);
               
     //now you have to shuffle the array items
     provinces = shuffleArray(provinces);
-    console.log("Shuffled Province array: "+provinces);
+    //console.log("Shuffled Province array: "+provinces);
 
   } catch (error) {
     console.error("Failed to make request:", error.message);
@@ -97,13 +120,13 @@ async function buildProvinces(){
 async function showGame(res){
   try{
     
-    guestName=guestName;
+    //guestName=guestName;
     //get the comunis' list
     const town_response = await axios.get(`https://axqvoqvbfjpaamphztgd.functions.supabase.co/comuni/provincia/${random_province}`);
     const towns_result = town_response.data;
     //get the comune to guess
     town_to_guess = towns_result[(Math.floor(Math.random() * towns_result.length))].nome;
-    console.log("Comune: "+town_to_guess);
+    //console.log("Comune: "+town_to_guess);
     res.render("game.ejs", { message:message, town_to_guess: town_to_guess, provinces: provinces, score: score, guestName: guestName, record: userRecord });
     
     provinces=[];
@@ -115,82 +138,113 @@ async function showGame(res){
 
 }
 
-
-app.get("/", async (req, res) => {
-  benvenuto = "Benvenuto! In questo gioco dovrai indovinare a quale provincia appartiene il Comune italiano che ti verrà mostrato di volta in volta!"
-  await readDb();
-  res.render("index.ejs",{benvenuto: benvenuto})
+/*
+async function readDb(){
   
-});
-
-async function readDb(dbName="./db/users.json"){
   const data = fs.readFileSync(dbName, "utf-8");
   users= JSON.parse(data);
   console.log("users[0].name in readDb func: "+users[0].name)
 
 }
+*/
 
 
-function checkJsonUser(name, pw){
-  const checkName = (n) => n.name===name;
-  console.log("users.some: "+ users.some(checkName));
-  if(users.some(checkName)){
-    const findUserIndex = (e) => e.name===name;
-    console.log("users.findIndex: "+users.findIndex(findUserIndex));
-    userIndex = users.findIndex(findUserIndex);
-    if(users[userIndex].pw===pw){
-      guestName=name;
-      userRecord=users[userIndex].record;
-      console.log("userRecord: "+userRecord);
-      return loggedIn=true;
-      
-    }else{
-      benvenuto="Wrong Nickname or password! Did you already registered?";
-      return loggedIn=false;
-    }
-
-  }else{
-    benvenuto="Wrong Nickname or password! Did you already registered?";
-    return loggedIn=false;
-  }
+app.get("/", async (req, res) => {
+  benvenuto = "Benvenuto! In questo gioco dovrai indovinare a quale provincia appartiene il Comune italiano che ti verrà mostrato di volta in volta!"
+  //await readDb();
+  res.render("index.ejs",{benvenuto: benvenuto})
   
+});
 
+
+
+/*
+function checkLogin(name, pw){
+   db.query("SELECT * FROM users WHERE userid = $1 AND pwhash = $2;", [name, pw], (err, res) => {
+    
+    if (err) {
+      console.error("Error executing query", err.stack);
+    }else{
+      if(res.rows.length>0){
+      console.log("Login corretto. Benvenuto, "+res.rows[0].userid);
+      guestName = name;
+      loggedIn= true;
+      console.log(loggedIn);
+      
+    } else{
+      benvenuto="Wrong Nickname or password! Did you already registered?";
+      console.log("Nickname o password errati. Ti sei già registrato?");
+      loggedIn= false;}}
+    db.end();
+  });
+}
+
+*/
+async function checkLogin(name, pw) {
+  try {
+    
+    const db = await pool.connect();
+    const res = await db.query("SELECT * FROM users WHERE userid = $1 AND pwhash = $2;", [name, pw]);
+    db.release();
+    if (res.rows.length > 0) {
+      console.log("Login corretto. Benvenuto, " + res.rows[0].userid);
+      guestName = name;
+      userRecord = res.rows[0].record;
+      loggedIn = true;
+    } else {
+      benvenuto = "Wrong Nickname or password! Did you already registered?";
+      console.log("Nickname o password errati. Ti sei già registrato?");
+      loggedIn = false;
+    }
+    return loggedIn;
+  } catch (err) {
+    console.error("Error executing query", err.stack);
+    throw err;
+  }
 }
 
 
-
 app.post("/login", async (req, res) =>{
-  score = 0;
-  console.log(number_of_answers);
-  if(req.body.provinces){
-    number_of_answers= req.body.provinces;
+  try {
+    score = 0;
+    //console.log(number_of_answers);
+    
+    if(req.body.provinces){number_of_answers= req.body.provinces;}
+
+    //console.log("196: req.body: "+req.body.nickname+", "+req.body.password)
+    if(req.body.logIn_button){
+      //console.log("login button pressed!");
+      loggedIn = await checkLogin(req.body.nickname, req.body.password);
+      if(!loggedIn){
+        res.render("index.ejs", {benvenuto: benvenuto})
+        console.log(loggedIn);
+      }else{
+            req.session.user = {
+              nickname: req.body.nickname,
+              score: score,
+              record: userRecord
+            };
+            console.log(req.session.user);
+            await buildProvinces();
+            showGame(res);};
+    }else if(req.body.guest_button){
+      userRecord = 0;
+
+      if (req.body.guestName){
+          guestName=req.body.guestName
+          };
+          await buildProvinces();
+          showGame(res);
+  }
+    
+  } catch (error) {
+    console.error("Error handling login", error);
+    res.status(500).send("Internal Server Error"); 
   }
 
-  console.log("req.body: "+req.body.nickname+", "+req.body.password)
+
+
   
-  if(req.body.logIn_button){
-  const loggedIn = checkJsonUser(req.body.nickname, req.body.password);
-    if(!loggedIn){
-      res.render("index.ejs", {benvenuto: benvenuto})
-      console.log("benvenuto: "+benvenuto);
-      }else{
-        req.session.user = {
-          nickname: req.body.nickname,
-          score: score,
-          record: userRecord
-        };
-        console.log(req.session.user);
-        buildProvinces();
-        setTimeout(() => {showGame(res)}, "500");
-    };
-  }else if(req.body.guest_button){
-    if (req.body.guestName){
-      guestName=req.body.guestName
-    };
-    buildProvinces();
-    setTimeout(() => {showGame(res)}, "500");
-    
-  }
  
   console.log("req.body.provinces: "+req.body.provinces);
 });
@@ -205,6 +259,7 @@ app.post("/create_account", async (req, res) =>{
 });
 
 
+/*
 function writeDbNewUser(obj, dbName="./db/users.json"){
 
   if (!obj){return console.log("Please provide data to save")};
@@ -212,41 +267,38 @@ function writeDbNewUser(obj, dbName="./db/users.json"){
   try {
     fs.writeFileSync(dbName, JSON.stringify(users));
 
-    return console.log("Save succefull")
+    return console.log("Save succefull");
     
   } catch (error) {
-    return console.log("Save failed")
+    return console.log("Save failed");
     
   }
 }
+*/
 
 app.post("/inserted_newAcc", async (req, res) =>{
   let newUser ={};
-  const checkName = (n) => n.name===req.body.nickname;
-  console.log("users.some: "+ users.some(checkName));
-  if(users.some(checkName)){
-    res.render("riprova.ejs");
-
+  //const checkName = (n) => n.name===req.body.nickname;
+  const db = await pool.connect();
+  const response = await db.query("SELECT * FROM users WHERE userid = $1;", [req.body.nickname]);
+  if (response.rows.length > 0){
+    res.render("riprova.ejs", {riprova: "Il nickname scelto risulta già in uso!"});
   }else if(req.body.nickname && req.body.password){
       newUser = {
-            id : users.length+1,
             name: req.body.nickname,
             pw: req.body.password,
             record: 0,  
     }
-      users.push(newUser);
-
-      writeDbNewUser(users);
-  
+    console.log()
+    await db.query("INSERT INTO users (userid, pwhash, record) VALUES($1, $2, $3);", [newUser.name, newUser.pw, newUser.record]);
+      db.release();
       score = 0;
       console.log("req.body nick e pw: "+req.body.nickname+" "+req.body.password+" - users: "+users);
-      await readDb();
+      //await readDb();
       res.render("account_confirmed.ejs", {benvenuto: benvenuto})
-
+  } else{
+    res.render("riprova.ejs", {riprova: "Per favore, inserisci anche una password!"});
   }
-
- 
-  
 });
 
 
@@ -269,24 +321,34 @@ app.post("/newgame", async (req, res) =>{
     const { nickname, record } = req.session.user;
     guestName = nickname;
     userRecord = record;
-    buildProvinces();
-    setTimeout(() => { showGame(res) }, "500");
+    await buildProvinces();
+    showGame(res);
     
   }else {
     // Se l'utente non è loggato o non ci sono dati della partita nella sessione, reindirizza l'utente alla pagina di login
     //res.render("index.ejs", { benvenuto: "Effettua il login per giocare!" });
-    buildProvinces();
-    setTimeout(() => { showGame(res) }, "500");
+    await buildProvinces();
+    showGame(res);
   }
   
 });
 
 
+app.post("/play_again", async (req, res) =>{
 
-app.post("/submit", (req, res) =>{
-  const userAnswer = req.body;  
-    console.log("userAnswer.button: "+userAnswer.button);
-    console.log(req.session.user);
+  await buildProvinces();
+  showGame(res);
+  
+  
+});
+
+
+
+app.post("/submit", async (req, res) =>{
+    
+    const userAnswer = req.body;  
+    //console.log("userAnswer.button: "+userAnswer.button);
+    //console.log(req.session.user);
     
     //https://javascript.plainenglish.io/javascript-remove-all-whitespace-from-string-ece685d0ec33
 
@@ -297,23 +359,23 @@ app.post("/submit", (req, res) =>{
         if(score>userRecord){
           userRecord=score, 
           req.session.user.record=score;
-          users[userIndex].record = userRecord;
+          
         };
   
         message = "Correct! The province of "+town_to_guess+" is "+random_province+"! Let's try with the next one!";
         console.log(message);
-        buildProvinces();
-        setTimeout(() => {showGame(res)}, "500");
+        await buildProvinces();
+        showGame(res);
         
       }else{
-        if(score>userRecord){userRecord=score; req.session.user.record=score;};
-        users[userIndex].record = userRecord;
-        message = "Oh, no! The province of "+town_to_guess+" was "+random_province+"! Choose the difficult level and try again!";
-        console.log(message);
-        res.render("game.ejs", { message:message, town_to_guess: town_to_guess, provinces: provinces, score: score, guestName: guestName, record: userRecord});
+        await updateDb();
+        score=0;
+        message = "Oh, no! The province of "+town_to_guess+" was "+random_province+"! Wanna play again?";
+        //console.log(message);
+        res.render("game_again.ejs", { message:message, town_to_guess: town_to_guess, provinces: provinces, score: score, guestName: guestName, record: userRecord});
         message = "Let's guess the province of this town:";
-        console.log("guestName " + guestName +" - score " + score +" - logged " + loggedIn +" - userRecord " + userRecord);
-        console.log(req.session.user);
+        //console.log("guestName " + guestName +" - score " + score +" - logged " + loggedIn +" - userRecord " + userRecord);
+        //console.log(req.session.user);
         
       }
   
@@ -327,20 +389,19 @@ app.post("/submit", (req, res) =>{
   
         message = "Correct! The province of "+town_to_guess+" is "+random_province+"! Let's try with the next one!";
         console.log(message);
-        buildProvinces();
-        setTimeout(() => {showGame(res)}, "500");
+        await buildProvinces();
+        showGame(res);
         
       }else{
         if(score>userRecord){userRecord=score};
-        message = "Oh, no! The province of "+town_to_guess+" was "+random_province+"! Choose the difficult level and try again!";
-        console.log(message);
-        res.render("game.ejs", { message:message, town_to_guess: town_to_guess, provinces: provinces, score: score, guestName: guestName, record: userRecord});
+        message = "Oh, no! The province of "+town_to_guess+" was "+random_province+"! Wanna play again?";
+        score=0;
+        //console.log(message);
+        res.render("game_again.ejs", { message:message, town_to_guess: town_to_guess, provinces: provinces, score: score, guestName: guestName, record: userRecord});
         message = "Let's guess the province of this town:";
-        console.log("guestName " + guestName +" - score " + score +" - logged " + loggedIn +" - userRecord " + userRecord);
-        console.log("Guest req session user: "+ req.session.user);
-        
+        //console.log("guestName " + guestName +" - score " + score +" - logged " + loggedIn +" - userRecord " + userRecord);
+        //console.log("Guest req session user: "+ req.session.user);
       }
-  
     }
     
     
@@ -349,7 +410,7 @@ app.post("/submit", (req, res) =>{
 });
 
 
-function writeDb_Logout(obj, dbName="./db/users.json"){
+/*function writeDb_Logout(obj, dbName="./db/users.json"){
 
   if (!obj){return console.log("Please provide data to save")};
   
@@ -363,15 +424,26 @@ function writeDb_Logout(obj, dbName="./db/users.json"){
     
   }
 }
+*/
 
-app.post("/logout", async (req, res) =>{
-   
-  console.log(users);
-  writeDb_Logout(users);
+async function updateDb(){
+  const db = await pool.connect();
+  await db.query("UPDATE users SET record = $1 WHERE userid= $2;", [userRecord, guestName]);
+  db.release(); 
+}
+
+
+app.get("/logout", async (req, res) =>{
+  console.log(userRecord, guestName)
+  await updateDb();
+  
+  //console.log(users);
+  //writeDb_Logout(users);
   req.session.destroy();
   benvenuto = "Benvenuto! In questo gioco dovrai indovinare a quale provincia appartiene il Comune italiano che ti verrà mostrato di volta in volta!"
-  await readDb();  
-  
+  //res.render("index.ejs",{benvenuto: benvenuto})
+  //await readDb();
+  res.redirect("/");
 });
 
 
