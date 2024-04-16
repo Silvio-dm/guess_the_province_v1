@@ -257,7 +257,7 @@ h1 {
 }
 
 
-/*.cards {
+.cards {
   display: flex;
   margin: 20px 0;
   width: 100%;
@@ -283,7 +283,7 @@ h1 {
   margin-top: 10px;
 }
 
-*/
+
 
 .tag-error {
   width: 100%;

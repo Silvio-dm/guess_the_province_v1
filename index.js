@@ -4,25 +4,10 @@ import axios from "axios";
 import fs from "fs";
 import session from 'express-session';
 import pg from "pg";
+import pool from './pool.js';
 
 
-/*
-const db = new pg.Client({
-  user: "postgres",
-  host: "localhost",
-  database: "guess_the_province",
-  password: "Domodossola81!",
-  port: 5432,
-});
-*/
 
-const pool = new pg.Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "guess_the_province",
-  password: "Domodossola81!",
-  port: 5432,
-});
 
 
 const app = express();
