@@ -8,11 +8,11 @@ import pg from "pg";
 
 
 const pool = new pg.Pool({
-  user: process.env.DB_USER || 'vxctyawcuyyffb',
-  host: process.env.DB_HOST || 'ec2-34-241-82-91.eu-west-1.compute.amazonaws.com',
-  database: process.env.DB_NAME || 'd7o81qbcn9kgeo',
-  password: process.env.DB_PASSWORD || '5455fb78a4bf6c5f5dd0f1b9d7ea87f7e704e8277fb56ffab7726ee069be3f5f',
-  port: process.env.DB_PORT || 5432,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
 });
 
 
