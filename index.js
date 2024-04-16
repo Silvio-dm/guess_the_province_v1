@@ -13,6 +13,10 @@ const pool = new pg.Pool({
   database: process.env.DB_NAME || 'd7o81qbcn9kgeo',
   password: process.env.DB_PASSWORD ||'5455fb78a4bf6c5f5dd0f1b9d7ea87f7e704e8277fb56ffab7726ee069be3f5f',
   port: process.env.DB_PORT || 5432,
+  ssl: {
+    rejectUnauthorized: false, // Per impostazione predefinita, il certificato SSL viene verificato. Se non si dispone del certificato radice del certificato SSL del database, è possibile disabilitare la verifica impostando questa opzione su false.
+    // Potrebbe essere necessario aggiungere il parametro sslmode=require per garantire una connessione crittografata
+  }
 });
 
 
