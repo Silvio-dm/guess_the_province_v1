@@ -1,3 +1,3 @@
 function writeDbNewUser(obj, dbName="./db/users.json")
 
-function writeDb_Logout(obj, dbName="./db/users.json"){
+function writeDb_Logout(obj, dbName="./db/users.json")

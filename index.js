@@ -1,13 +1,19 @@
 import express from "express";
 import bodyParser from "body-parser";
 import axios from "axios";
-import fs from "fs";
+//import fs from "fs";
 import session from 'express-session';
 import pg from "pg";
-import pool from './pool.js';
+//import pool from './pool.js';
 
 
-
+const pool = new pg.Pool({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT || 5432,
+});
 
 
 const app = express();
