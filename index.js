@@ -7,7 +7,7 @@ import pg from "pg";
 //import pool from './pool.js';
 
 
-const pool = new Pool({
+const pool = new pg.Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
   database: process.env.DB_NAME,
